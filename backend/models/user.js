@@ -1,15 +1,18 @@
-'use strict';
-module.exports = (sequelize, DataTypes) => {
-  const User = sequelize.define('User', {
-    email: DataTypes.STRING,
-    password: DataTypes.STRING,
-    cidade: DataTypes.STRING,
-    estado: DataTypes.STRING,
-    cep: DataTypes.STRING
-  }, {});
-  
-  User.associate = function(models) {
-    // associations can be defined here
-  };
-  return User;
-};
+const {Model, DataTypes} = require('sequelize');
+
+  class User extends Model{
+    static init(sequelize){
+      super.init({        
+        email: DataTypes.STRING,
+        password: DataTypes.STRING,
+        cidade: DataTypes.STRING,
+        estado: DataTypes.STRING,
+        cep: DataTypes.STRING
+      }, {
+        //passando conexão com banco
+        sequelize
+      })
+    }
+  }
+
+  module.exports = User;
