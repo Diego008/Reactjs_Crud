@@ -1,6 +1,6 @@
 import React from 'react';
 
-export default class Home extends React.Component {
+export default class Home extends React.Component {    
 
     constructor(props) {
         super(props);
@@ -65,7 +65,7 @@ export default class Home extends React.Component {
                     cep: cep
                 }
             ]
-        })
+        })        
 
         this.inputEmail.value = '';
         this.inputPass.value = '';
@@ -74,21 +74,58 @@ export default class Home extends React.Component {
         this.inputCEP.value = '';
     }
 
-    // handleChangeState(e) {
-    //     e.preventDefault();
+    handleChangeState(e) {
+        e.preventDefault();
 
-    //     var j = e.target.value.substring(e.target.value.indexOf('-') + 1);
+        var j = e.target.value.substring(e.target.value.indexOf('-') + 1);
 
-    //     console.log(j);
-    // }
+        console.log(j);
+    }
 
 
     render() {
-        const cont = this.state.usuarios.length - 1;
+        let cont = this.state.usuarios.length - 1;
         let paragraph;
 
         if (cont === 0) {
             paragraph = <p>Nenhum usuário Cadastrado.</p>
+        } else {
+            paragraph = <table className="table table-striped">
+                <thead>
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Email</th>
+                        <th scope="col">Senha</th>
+                        <th scope="col">Cidade</th>
+                        <th scope="col">Estado</th>
+                        <th scope="col">CEP</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                {
+
+                    this.state.usuarios.map((users, index) => {
+                        if (index !== 0) {
+                            return (
+
+
+                                <tbody key={index}>
+                                    <tr>
+                                        <th scope="row">{index}</th>
+                                        <td>{users.email}</td>
+                                        <td>{users.password}</td>
+                                        <td>{users.cidade}</td>
+                                        <td>{users.estado}</td>
+                                        <td>{users.cep}</td>
+                                    </tr>
+                                </tbody>
+
+                            )
+                        }
+                        return null;
+                    })
+                }
+            </table>
         }
 
         return (
@@ -147,43 +184,7 @@ export default class Home extends React.Component {
                 </div>
                 <div className="row marginTable">
                     <div className="col-sm-12 d-flex justify-content-center">
-
                         {paragraph}
-                        <table class="table table-striped">
-                            <thead>
-                                <tr>
-                                    <th scope="col">#</th>
-                                    <th scope="col">Email</th>
-                                    <th scope="col">Senha</th>
-                                    <th scope="col">Cidade</th>
-                                    <th scope="col">Estado</th>
-                                    <th scope="col">CEP</th>
-                                    <th>Ações</th>
-                                </tr>
-                            </thead>
-                            {
-                                this.state.usuarios.map((users, index) => {
-                                    if (index !== 0) {
-                                        return (
-
-
-                                            <tbody>
-                                                <tr>
-                                                    <th scope="row">{index}</th>
-                                                    <td>{users.email}</td>
-                                                    <td>{users.password}</td>
-                                                    <td>{users.cidade}</td>
-                                                    <td>{users.estado}</td>
-                                                    <td>{users.cep}</td>
-                                                </tr>
-                                            </tbody>
-
-                                        )
-                                    }
-                                    return null;
-                                })
-                            }
-                        </table>
                     </div>
                 </div>
             </div>

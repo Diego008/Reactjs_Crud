@@ -1,6 +1,6 @@
 import React from 'react';
 import './App.css';
-import Home from './components/home';
+import NewUser from './components/NewUser';
 
 function App() {
   return (
@@ -8,7 +8,7 @@ function App() {
       <header>
         <h1 className="text-center">Preencha o Formulário</h1>
 
-        <Home />
+        <NewUser />
       </header>
     </div>
   );
