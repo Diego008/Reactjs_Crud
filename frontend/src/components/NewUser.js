@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
-import {Modal, Button} from "react-bootstrap";
+import { Modal, Button } from "react-bootstrap";
 
 export default function New() {
   const [email, setEmail] = useState("");
@@ -8,7 +8,8 @@ export default function New() {
   const [cidade, setCidade] = useState("");
   const [estado, setEstado] = useState("");
   const [cep, setCep] = useState("");
-  const [show, setShow] = useState(false);
+  const [success, setShow] = useState(false);
+  const [warning, setShow2] = useState(false);
 
   async function handleSubmit(event) {
     event.preventDefault();
@@ -22,19 +23,26 @@ export default function New() {
         cep,
       })
       .then((response) => {
-        setShow(true);
-        setEmail("");
-        setPassword("");
-        setCidade("");
-        setEstado("");
-        setCep("");
+        
+        if (response.data) {          
+          setEmail("");
+          setPassword("");
+          setCidade("");
+          setEstado("");
+          setCep("");          
+          setShow(true);
+        }else{
+          setShow2(true);
+        }
+
       })
       .catch((err) => {
-        alert("Usuário não cadastrado");
+        alert("Erro para cadastrar usuário");
       });
   }
 
   const handleClose = () => setShow(false);
+  const handleClose2 = () => setShow2(false);
 
   return (
     <div>
@@ -115,13 +123,28 @@ export default function New() {
         </div>
       </div>
 
-      <Modal show={show} onHide={handleClose}>
+      <Modal show={success} onHide={handleClose}>
         <Modal.Header closeButton>
           <Modal.Title>Usuário Cadastrado com sucesso</Modal.Title>
         </Modal.Header>
         {/* <Modal.Body>Woohoo, you're reading this text in a modal!</Modal.Body> */}
         <Modal.Footer>
           <Button variant="secondary" onClick={handleClose}>
+            Ok
+          </Button>
+          {/* <Button variant="primary" onClick={handleClose}>
+            Save Changes
+          </Button> */}
+        </Modal.Footer>
+      </Modal>
+
+      <Modal show={warning} onHide={handleClose2}>
+        <Modal.Header closeButton>
+          <Modal.Title>Usuário já existente</Modal.Title>
+        </Modal.Header>
+        {/* <Modal.Body>Woohoo, you're reading this text in a modal!</Modal.Body> */}
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleClose2}>
             Ok
           </Button>
           {/* <Button variant="primary" onClick={handleClose}>

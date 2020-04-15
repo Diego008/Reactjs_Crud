@@ -4,15 +4,22 @@ module.exports = {
 
     //Metodo para criar usuário
     async store(req, res) {
-        const {email, password, cidade, estado, cep} = req.body;        
+        const { email, password, cidade, estado, cep } = req.body;
 
-        const user = await User.create({email, password, cidade, estado, cep});
+        let user = await User.findOne({ where: { email: email } });
 
-        return res.json(user);
+        if(!user){
+            user = await User.create({ email, password, cidade, estado, cep });
+
+            return res.json(user);
+
+        } else {
+            return res.send(false);
+        }      
     },
 
     //Metodo para listar todos os usuários
-    async index(req, res){
+    async index(req, res) {
         const users = await User.findAll();
 
         return res.json(users);
