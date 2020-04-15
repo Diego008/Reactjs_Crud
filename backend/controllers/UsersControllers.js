@@ -6,7 +6,7 @@ module.exports = {
     async store(req, res) {
         const { email, password, cidade, estado, cep } = req.body;
 
-        let user = await User.findOne({ where: { email: email } });
+        let user = await User.findOne({ where: { email } });
 
         if(!user){
             user = await User.create({ email, password, cidade, estado, cep });
