@@ -4,7 +4,7 @@ module.exports = {
 
     //Metodo para criar usuário
     async store(req, res) {
-        const {email, password, cidade, estado, cep} = req.body;
+        const {email, password, cidade, estado, cep} = req.body;        
 
         const user = await User.create({email, password, cidade, estado, cep});
 
