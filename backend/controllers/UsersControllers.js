@@ -1,4 +1,5 @@
 const User = require('../models/user');
+const crypto = require('crypto');
 
 module.exports = {
 
@@ -8,8 +9,34 @@ module.exports = {
 
         let user = await User.findOne({ where: { email } });
 
+        // console.log(crypto.getHashes());
+
         if(!user){
-            user = await User.create({ email, password, cidade, estado, cep });
+
+            //Criptografando aes-256
+            // const alg = 'aes-256-ctr';
+            // const key = 'abcdabcd';
+
+            // const cipher = crypto.createCipher(alg, key);
+            // const crypted = cipher.update(password, 'utf8', 'base64');            
+            //--------------------------------------------------------
+
+            //sha512
+            crypted = crypto.createHash('sha512').update(password).digest('base64');
+
+            //Descriptografando
+            // const decipher = crypto.createDecipher(alg, key);
+            // const descrypted = decipher.update(crypted, 'base64', 'utf8');
+            // console.log(descrypted);
+            //----------------------------------------------------------
+
+            user = await User.create({ 
+                email, 
+                password: crypted, 
+                cidade, 
+                estado, 
+                cep 
+            });
 
             return res.json(user);
 

@@ -58,6 +58,7 @@ export default function New() {
                   id="txtEmail"
                   value={email}
                   onChange={(event) => setEmail(event.target.value)}
+                  required
                 />
               </div>
               <div className="form-group col-md-6">
@@ -68,6 +69,7 @@ export default function New() {
                   id="txtPassword"
                   value={password}
                   onChange={(event) => setPassword(event.target.value)}
+                  required
                 />
               </div>
             </div>
@@ -90,6 +92,7 @@ export default function New() {
                   className="form-control"
                   value={estado}
                   onChange={(event) => setEstado(event.target.value)}
+                  required
                 >
                   <option>Selecione ...</option>
                   <option>ACRE - AC</option>
@@ -103,6 +106,7 @@ export default function New() {
                   id="txtCEP"
                   value={cep}
                   onChange={(event) => setCep(event.target.value)}
+                  required
                 />
               </div>
             </div>
@@ -112,6 +116,7 @@ export default function New() {
                   className="form-check-input"
                   type="checkbox"
                   id="gridCheck"
+                  required
                 />
                 <label className="form-check-label">Não sou um Robô</label>
               </div>
