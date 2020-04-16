@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { Modal, Button } from "react-bootstrap";
+import ListUser from './ListUser';
 
 export default function New() {
   const [email, setEmail] = useState("");
@@ -23,7 +24,7 @@ export default function New() {
         cep,
       })
       .then((response) => {
-        
+        console.log(response.data);
         if (response.data) {          
           setEmail("");
           setPassword("");
@@ -128,6 +129,12 @@ export default function New() {
         </div>
       </div>
 
+      <div className="row marginTable">
+                <div className="col-sm-12 d-flex justify-content-center">
+                    <ListUser />
+                </div>
+            </div> 
+
       <Modal show={success} onHide={handleClose}>
         <Modal.Header closeButton>
           <Modal.Title>Usuário Cadastrado com sucesso</Modal.Title>
@@ -157,11 +164,7 @@ export default function New() {
           </Button> */}
         </Modal.Footer>
       </Modal>
-      {/* <div className="row marginTable">
-                <div className="col-sm-12 d-flex justify-content-center">
-                    
-                </div>
-            </div>  */}
+      
     </div>
   );
 }

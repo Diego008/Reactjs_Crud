@@ -22,7 +22,7 @@ module.exports = {
             //--------------------------------------------------------
 
             //sha512
-            crypted = crypto.createHash('sha512').update(password).digest('base64');
+            const crypted = crypto.createHash('sha512').update(password).digest('base64');
 
             //Descriptografando
             // const decipher = crypto.createDecipher(alg, key);
