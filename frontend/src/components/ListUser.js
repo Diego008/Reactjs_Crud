@@ -1,80 +1,42 @@
-import React from 'react';
-import axios from 'axios';
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 
-export default class ListUser extends React.Component {
+export default function New() {
+  const [users, setUsers] = useState([]);
 
-    constructor(props) {
-        super(props);
+  useEffect(() => {
+    async function loadUsers() {
+      const response = await axios.get("http://localhost:3333/allusers");
 
-        this.state = {
-            users: [
-                {
-                    email: '',
-                    password: '',
-                    cidade: '',
-                    estado: '',
-                    cep: ''
-                }
-            ]
-        }
-        
+      setUsers(response.data);
+      console.log(response.data);
     }
+    loadUsers();
+  }, []);
 
-    componentDidMount(){        
-        axios.get("http://localhost:3333/allusers").then(response => {                       
-            response.data.forEach(element => {
-                this.setState({
-                    users: [
-                        ...this.state.users,
-                        {
-                            email: element.email,                            
-                            cidade: element.cidade,
-                            estado: element.estado,
-                            cep: element.cep
-                        }
-                    ]
-                })
-            });
-
-        });
-    }
-
-    render() {
-
-        return (
-            <table className="table table-striped">
-                <thead>
-                    <tr>
-                        <th scope="col">#</th>
-                        <th scope="col">Email</th>                        
-                        <th scope="col">Cidade</th>
-                        <th scope="col">Estado</th>
-                        <th scope="col">CEP</th>
-                        <th>Ações</th>
-                    </tr>
-                </thead>
-
-                {
-                    this.state.users.map((user, index) => {
-                        if (index !== 0) {
-                            return (
-                                <tbody key={index}>
-                                    <tr>
-                                        <th scope="row">{index}</th>
-                                        <td>{user.email}</td>                                        
-                                        <td>{user.cidade}</td>
-                                        <td>{user.estado}</td>
-                                        <td>{user.cep}</td>
-                                    </tr>
-                                </tbody>
-                            )
-                        }
-                        return null;
-                    })
-                }
-            </table>
-        );
-    }
-
+  return (
+    <table className="table table-striped">
+      <thead>
+        <tr>
+          <th scope="col">#</th>
+          <th scope="col">Email</th>
+          <th scope="col">Cidade</th>
+          <th scope="col">Estado</th>
+          <th scope="col">CEP</th>
+          <th>Ações</th>
+        </tr>
+      </thead>
+      {users.map(user => (
+        <tbody key={user.id}>
+          <tr>
+      <th scope="row">{user.id}</th>
+            <td>{user.email}</td>
+            <td>{user.cidade}</td>
+            <td>{user.estado}</td>
+            <td>{user.cep}</td>
+          </tr>
+        </tbody>        
+      )) }
+    </table>
+  );
 }
-
