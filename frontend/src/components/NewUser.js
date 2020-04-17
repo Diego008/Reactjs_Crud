@@ -1,7 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { Modal, Button } from "react-bootstrap";
-import ListUser from './ListUser';
+// import ListUser from './ListUser';
 
 export default function New() {
   const [email, setEmail] = useState("");
@@ -11,6 +11,7 @@ export default function New() {
   const [cep, setCep] = useState("");
   const [success, setShow] = useState(false);
   const [warning, setShow2] = useState(false);
+  const [users, setUsers] = useState([]);
 
   async function handleSubmit(event) {
     event.preventDefault();
@@ -25,14 +26,15 @@ export default function New() {
       })
       .then((response) => {
         console.log(response.data);
-        if (response.data) {          
+        if (response.data) {
+          loadUsers();
           setEmail("");
           setPassword("");
           setCidade("");
           setEstado("");
-          setCep("");          
+          setCep("");
           setShow(true);
-        }else{
+        } else {
           setShow2(true);
         }
 
@@ -44,6 +46,25 @@ export default function New() {
 
   const handleClose = () => setShow(false);
   const handleClose2 = () => setShow2(false);
+
+  async function loadUsers() {
+    const response = await axios.get("http://localhost:3333/allusers");
+
+    setUsers(response.data);
+  };
+
+  useEffect(() => { loadUsers() }, []);
+
+  async function deleteUser(e){
+    const id = e.target.getAttribute("id");    
+
+    // await axios.get(`http://localhost:3333/deleteusers/${id}`);
+
+    setUsers(users.filter(item => item.id === id));
+    // setUsers(users.splice(id, 1));    
+    
+    // loadUsers();
+  }
 
   return (
     <div>
@@ -130,10 +151,34 @@ export default function New() {
       </div>
 
       <div className="row marginTable">
-                <div className="col-sm-12 d-flex justify-content-center">
-                    <ListUser />
-                </div>
-            </div> 
+        <div className="col-sm-12 d-flex justify-content-center">
+          <table className="table table-striped">
+            <thead>
+              <tr>
+                <th scope="col">#</th>
+                <th scope="col">Email</th>
+                <th scope="col">Cidade</th>
+                <th scope="col">Estado</th>
+                <th scope="col">CEP</th>
+                <th>Ações</th>
+              </tr>
+            </thead>
+            {
+              users.map(user => (
+                <tbody key={user.id}>
+                  <tr>
+                    <th scope="row">{user.id}</th>
+                    <td>{user.email}</td>
+                    <td>{user.cidade}</td>
+                    <td>{user.estado}</td>
+                    <td>{user.cep}</td>
+                    <td><button id={user.id} type="button" onClick={deleteUser} className="btn btn-primary">Delete</button></td>
+                  </tr>
+                </tbody>
+              ))}
+          </table>
+        </div>
+      </div>
 
       <Modal show={success} onHide={handleClose}>
         <Modal.Header closeButton>
@@ -164,7 +209,7 @@ export default function New() {
           </Button> */}
         </Modal.Footer>
       </Modal>
-      
+
     </div>
   );
 }

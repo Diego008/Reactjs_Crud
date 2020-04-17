@@ -5,5 +5,7 @@ const users = require('../controllers/UsersControllers');
 
 routes.post('/', users.store);
 routes.get('/allusers', users.index);
+routes.get('/allusers/:id', users.indexOne);
+routes.get('/deleteusers/:id', users.delete);
 
 module.exports = routes;

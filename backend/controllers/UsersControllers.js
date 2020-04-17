@@ -11,7 +11,7 @@ module.exports = {
 
         // console.log(crypto.getHashes());
 
-        if(!user){
+        if (!user) {
 
             //Criptografando aes-256
             // const alg = 'aes-256-ctr';
@@ -30,19 +30,19 @@ module.exports = {
             // console.log(descrypted);
             //----------------------------------------------------------
 
-            user = await User.create({ 
-                email, 
-                password: crypted, 
-                cidade, 
-                estado, 
-                cep 
+            user = await User.create({
+                email,
+                password: crypted,
+                cidade,
+                estado,
+                cep
             });
 
             return res.json(user);
 
         } else {
             return res.send(false);
-        }      
+        }
     },
 
     //Metodo para listar todos os usuários
@@ -50,5 +50,27 @@ module.exports = {
         const users = await User.findAll();
 
         return res.json(users);
+    },
+
+    async indexOne(req, res) {
+        const { id } = req.params;
+
+        const user = await User.findOne({ id });
+
+        return res.json(user)
+    },
+
+    async delete(req, res) {
+        const { id } = req.params;
+
+        const user = await User.findOne({ id })
+
+        if(!user){
+            return res.status(404).json({error: 'Usuario não encontrado'});
+        }
+
+        user.destroy();
+
+        return res.json(user);
     }
 }
