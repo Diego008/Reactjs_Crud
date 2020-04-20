@@ -24,8 +24,7 @@ export default function New() {
         estado,
         cep,
       })
-      .then((response) => {
-        console.log(response.data);
+      .then((response) => {        
         if (response.data) {
           loadUsers();
           setEmail("");
@@ -57,13 +56,9 @@ export default function New() {
 
   async function deleteUser(e){
     const id = e.target.getAttribute("id");    
-
-    // await axios.get(`http://localhost:3333/deleteusers/${id}`);
-
-    setUsers(users.filter(item => item.id === id));
-    // setUsers(users.splice(id, 1));    
+    await axios.get(`http://localhost:3333/deleteusers/${id}`);
     
-    // loadUsers();
+    loadUsers();
   }
 
   return (
@@ -164,7 +159,7 @@ export default function New() {
               </tr>
             </thead>
             {
-              users.map(user => (
+              users.map((user, key) => (
                 <tbody key={user.id}>
                   <tr>
                     <th scope="row">{user.id}</th>
@@ -172,7 +167,7 @@ export default function New() {
                     <td>{user.cidade}</td>
                     <td>{user.estado}</td>
                     <td>{user.cep}</td>
-                    <td><button id={user.id} type="button" onClick={deleteUser} className="btn btn-primary">Delete</button></td>
+                    <td><button key={key} id={user.id} type="button" onClick={deleteUser} className="btn btn-primary">Delete</button></td>
                   </tr>
                 </tbody>
               ))}

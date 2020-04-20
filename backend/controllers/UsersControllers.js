@@ -55,15 +55,15 @@ module.exports = {
     async indexOne(req, res) {
         const { id } = req.params;
 
-        const user = await User.findOne({ id });
+        const user = await User.findOne({ where: {id} });
 
         return res.json(user)
     },
 
     async delete(req, res) {
-        const { id } = req.params;
+        const { id } = req.params;        
 
-        const user = await User.findOne({ id })
+        const user = await User.findByPk(id);        
 
         if(!user){
             return res.status(404).json({error: 'Usuario não encontrado'});
