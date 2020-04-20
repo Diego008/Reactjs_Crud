@@ -48,13 +48,16 @@ module.exports = {
     //Metodo para listar todos os usuários
     async index(req, res) {
         const users = await User.findAll({
-            limit: 2,
-            offset: 2
+            limit: 5,
+            order: [
+                ['ID', 'ASC']
+            ]                           
         });
-
+        
         return res.json(users);
     },
 
+    //Metodo para retornar um usuário
     async indexOne(req, res) {
         const { id } = req.params;
 
@@ -63,6 +66,7 @@ module.exports = {
         return res.json(user)
     },
 
+    //Metodo para deletar usuário
     async delete(req, res) {
         const { id } = req.params;        
 

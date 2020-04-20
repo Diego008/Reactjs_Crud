@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
-import { Modal, Button } from "react-bootstrap";
-// import ListUser from './ListUser';
+import { Modal, Button, Pagination } from "react-bootstrap";
+import api from '../services/api';
 
 export default function New() {
   const [email, setEmail] = useState("");
@@ -16,50 +15,100 @@ export default function New() {
   async function handleSubmit(event) {
     event.preventDefault();
 
-    await axios
-      .post("http://localhost:3333", {
-        email,
-        password,
-        cidade,
-        estado,
-        cep,
-      })
-      .then((response) => {        
-        if (response.data) {
-          loadUsers();
-          setEmail("");
-          setPassword("");
-          setCidade("");
-          setEstado("");
-          setCep("");
-          setShow(true);
-        } else {
-          setShow2(true);
-        }
+    const response = await api.post('/', {
+      email,
+      password,
+      cidade,
+      estado,
+      cep,
+    });
 
-      })
-      .catch((err) => {
-        alert("Erro para cadastrar usuário");
-      });
+    if (response.data) {
+      loadUsers();
+      setEmail("");
+      setPassword("");
+      setCidade("");
+      setEstado("");
+      setCep("");
+      setShow(true);
+    } else {
+      setShow2(true);
+    }
   }
 
   const handleClose = () => setShow(false);
   const handleClose2 = () => setShow2(false);
 
   async function loadUsers() {
-    const response = await axios.get("http://localhost:3333/allusers");
+    const response = await api.get('/allusers');
 
     setUsers(response.data);
   };
 
   useEffect(() => { loadUsers() }, []);
 
-  async function deleteUser(e){
-    const id = e.target.getAttribute("id");    
-    await axios.get(`http://localhost:3333/deleteusers/${id}`);
-    
-    loadUsers();
-  }
+  async function deleteUser(e) {
+    const id = e.target.getAttribute("id");  
+    await api.get(`/deleteusers/${id}`);
+
+    setUsers(users.filter(item => item.id !== parseInt(id)));
+
+  };
+
+  let listUsers;
+  if (users.length > 0) {
+
+    listUsers = (
+      <table className="table table-striped">
+        <thead>
+          <tr>
+            <th scope="col">#</th>
+            <th scope="col">Email</th>
+            <th scope="col">Cidade</th>
+            <th scope="col">Estado</th>
+            <th scope="col">CEP</th>
+            <th>Ações</th>
+          </tr>
+        </thead>
+        {
+          users.map((user, key) => (
+            <tbody key={user.id}>
+              <tr>
+                <th scope="row">{user.id}</th>
+                <td>{user.email}</td>
+                <td>{user.cidade}</td>
+                <td>{user.estado}</td>
+                <td>{user.cep}</td>
+                <td><button key={key} id={user.id} type="button" onClick={deleteUser} className="btn btn-primary">Delete</button></td>
+              </tr>
+            </tbody>
+          ))}
+      </table>
+    );
+  } else {
+    listUsers = (
+      <p><strong>Nenhum usuário Cadastrado.</strong></p>
+    );
+  };
+
+  let active = 1;
+  let items = [];
+  if(users.length > 2){
+    for (let number = 1; number <= 5; number++) {
+      items.push(
+        <Pagination.Item key={number} active={number === active}>
+          {number}
+        </Pagination.Item>,
+      );
+    }
+  };
+  
+
+  const paginationBasic = (
+    <div>
+      <Pagination size="sm">{items}</Pagination>
+    </div>
+  );
 
   return (
     <div>
@@ -147,32 +196,12 @@ export default function New() {
 
       <div className="row marginTable">
         <div className="col-sm-12 d-flex justify-content-center">
-          <table className="table table-striped">
-            <thead>
-              <tr>
-                <th scope="col">#</th>
-                <th scope="col">Email</th>
-                <th scope="col">Cidade</th>
-                <th scope="col">Estado</th>
-                <th scope="col">CEP</th>
-                <th>Ações</th>
-              </tr>
-            </thead>
-            {
-              users.map((user, key) => (
-                <tbody key={user.id}>
-                  <tr>
-                    <th scope="row">{user.id}</th>
-                    <td>{user.email}</td>
-                    <td>{user.cidade}</td>
-                    <td>{user.estado}</td>
-                    <td>{user.cep}</td>
-                    <td><button key={key} id={user.id} type="button" onClick={deleteUser} className="btn btn-primary">Delete</button></td>
-                  </tr>
-                </tbody>
-              ))}
-          </table>
+          {listUsers}
         </div>
+      </div>
+
+      <div className="row justify-content-center">
+        {paginationBasic}
       </div>
 
       <Modal show={success} onHide={handleClose}>
@@ -207,4 +236,5 @@ export default function New() {
 
     </div>
   );
+
 }
