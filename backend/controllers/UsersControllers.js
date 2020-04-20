@@ -47,7 +47,10 @@ module.exports = {
 
     //Metodo para listar todos os usuários
     async index(req, res) {
-        const users = await User.findAll();
+        const users = await User.findAll({
+            limit: 2,
+            offset: 2
+        });
 
         return res.json(users);
     },
@@ -71,6 +74,6 @@ module.exports = {
 
         user.destroy();
 
-        return res.json(user);
+        return res.json();
     }
 }
