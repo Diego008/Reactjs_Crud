@@ -60,10 +60,17 @@ export default function New() {
   let items = [];
   let usersPerPage = 3;
 
+  function handlePaginate(e) {
+    const id = e.target.id;
+    
+    currentPage = parseInt(id);
+    console.log(currentPage);
+  };
+
   if(users.length > 2){
     for (let number = 1; number <= Math.ceil(users.length / usersPerPage); number++) {
       items.push(
-        <Pagination.Item key={number} active={number === currentPage} onClick={(event) => event.target.id}>
+        <Pagination.Item key={number} active={(number === currentPage)} onClick={handlePaginate}>
           {number}
         </Pagination.Item>,
       );

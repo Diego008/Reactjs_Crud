@@ -1,5 +1,6 @@
 const User = require("../models/user");
 const crypto = require("crypto");
+const db = require('sequelize-paginate');
 
 module.exports = {
   //Metodo para criar usuário
@@ -41,9 +42,9 @@ module.exports = {
         });
 
         return res.json(user);
-      } 
+      }
     } catch (err) {
-        return res.status(400).send(false);
+      return res.status(400).send(false);
     }
   },
 
@@ -55,6 +56,24 @@ module.exports = {
     });
 
     return res.json(users);
+
+  },
+
+  async pagination(req, res) {
+    let limit = 2;
+    let offset = 0;
+
+    const countAllUsers = await User.findAndCountAll();
+
+    let pages = Math.ceil(countAllUsers.count / limit);
+
+    const users = await User.findAll({
+      limit: limit,      
+      order: [["ID", "ASC"]]
+    });
+
+    return res.json({ users, countAllUsers, pages });
+
   },
 
   //Metodo para retornar um usuário

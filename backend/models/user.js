@@ -1,4 +1,5 @@
 const {Model, DataTypes} = require('sequelize');
+const sequelizePaginate = require('sequelize-paginate');
 
   class User extends Model{
     static init(sequelize){
@@ -22,9 +23,11 @@ const {Model, DataTypes} = require('sequelize');
         cep: DataTypes.STRING
       }, {
         //passando conexão com banco
-        sequelize
+        sequelize,        
       })
     }
   }
+
+  sequelizePaginate.paginate(User);
 
   module.exports = User;
