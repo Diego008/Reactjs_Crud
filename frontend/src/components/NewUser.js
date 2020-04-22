@@ -41,7 +41,7 @@ export default function New() {
 
   async function loadUsers() {
     const response = await api.get('/allusers');
-
+    
     setUsers(response.data);
   };
 
@@ -56,7 +56,32 @@ export default function New() {
   };
 
   let listUsers;
+  let currentPage = 1;
+  let items = [];
+  let usersPerPage = 3;
+
+  if(users.length > 2){
+    for (let number = 1; number <= Math.ceil(users.length / usersPerPage); number++) {
+      items.push(
+        <Pagination.Item key={number} active={number === currentPage} onClick={(event) => event.target.id}>
+          {number}
+        </Pagination.Item>,
+      );
+    }
+  };
+  
+
+  const paginationBasic = (
+    <div>
+      <Pagination size="sm">{items}</Pagination>
+    </div>
+  );
+
+  
   if (users.length > 0) {
+    const pages = currentPage * usersPerPage;
+    const page = pages - usersPerPage;
+    const usersListPage = users.slice(page, pages);
 
     listUsers = (
       <table className="table table-striped">
@@ -71,7 +96,7 @@ export default function New() {
           </tr>
         </thead>
         {
-          users.map((user, key) => (
+          usersListPage.map((user, key) => (
             <tbody key={user.id}>
               <tr>
                 <th scope="row">{user.id}</th>
@@ -90,25 +115,6 @@ export default function New() {
       <p><strong>Nenhum usuário Cadastrado.</strong></p>
     );
   };
-
-  let active = 1;
-  let items = [];
-  if(users.length > 2){
-    for (let number = 1; number <= 5; number++) {
-      items.push(
-        <Pagination.Item key={number} active={number === active}>
-          {number}
-        </Pagination.Item>,
-      );
-    }
-  };
-  
-
-  const paginationBasic = (
-    <div>
-      <Pagination size="sm">{items}</Pagination>
-    </div>
-  );
 
   return (
     <div>
