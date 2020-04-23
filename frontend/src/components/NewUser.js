@@ -11,72 +11,121 @@ export default function New() {
   const [success, setShow] = useState(false);
   const [warning, setShow2] = useState(false);
   const [users, setUsers] = useState([]);
+  const [btnuser, setBtnUser] = useState(true);
+  const [idUser, setId] = useState(0);
 
   async function handleSubmit(event) {
     event.preventDefault();
 
-    const response = await api.post('/', {
-      email,
-      password,
-      cidade,
-      estado,
-      cep,
-    });
+    if(btnuser){
+      const response = await api.post('/', {
+        email,
+        password,
+        cidade,
+        estado,
+        cep,
+      });
+  
+      if (response.data) {
+        loadUsers();
+        setEmail("");
+        setPassword("");
+        setCidade("");
+        setEstado("");
+        setCep("");
+        setShow(true);
+      } else {
+        setShow2(true);
+      }
+    }else{
+      const response = await api.put(`/edituser/${idUser}`, {      
+        email,
+        password,
+        cidade,
+        estado,
+        cep
+      });
 
-    if (response.data) {
-      loadUsers();
-      setEmail("");
-      setPassword("");
-      setCidade("");
-      setEstado("");
-      setCep("");
-      setShow(true);
-    } else {
-      setShow2(true);
+      if (response.data) {
+        loadUsers();
+        setEmail("");
+        setPassword("");
+        setCidade("");
+        setEstado("");
+        setCep("");
+        setShow(true);
+        setBtnUser(true);
+      } else {
+        setShow2(true);
+      }
     }
+
   }
 
   const handleClose = () => setShow(false);
   const handleClose2 = () => setShow2(false);
 
-  async function loadUsers() {
-    const response = await api.get('/allusers');
-    
-    setUsers(response.data);
-  };
+    // let idPage = 1;
+    async function loadUsers() {
+      const response = await api.get('/allusers');
+      // const response = await api.get(`/paginate/${idPage}`);
+
+      setUsers(response.data);
+      // setUsers(response.data.users);
+    };
 
   useEffect(() => { loadUsers() }, []);
 
+  //  useEffect(() => {
+  //   async function loadUsers() {
+  //     // const response = await api.get('/allusers');
+  //     const response = await api.get(`/paginate/${idPage}`);
+
+  //     setUsers(response.data.users);
+  //   }
+  //    loadUsers();
+  //   }, [idPage]);
+
   async function deleteUser(e) {
-    const id = e.target.getAttribute("id");  
-    await api.get(`/deleteusers/${id}`);
+    const id = e.target.getAttribute("id");
+    await api.delete(`/deleteusers/${id}`);
 
     setUsers(users.filter(item => item.id !== parseInt(id)));
 
   };
 
-  let listUsers;  
-  let items = [];
-  let usersPerPage = 3;
+  async function editUser(e){
+    const id = e.target.getAttribute("id");
 
-  function handlePaginate(e) {
+    const user = users.filter(item => item.id === parseInt(id));
+
+    setEmail(user[0].email);
+    setCidade(user[0].cidade);
+    setEstado(user[0].estado);
+    setCep(user[0].cep);
+    setId(id);
+    setBtnUser(false);
+  };
+
+  let listUsers;
+  let items = [];
+
+  async function handlePaginate(e) {
     const id = e.target.id;
-        
+
     console.log(id);
-    api.get(`/paginate/${id}`).then(response => {
+    await api.get(`/paginate/${id}`).then(response => {
       console.log(response.data.users);
     })
   };
 
-    for (let number = 1; number <= Math.ceil(users.length / usersPerPage); number++) {
-      items.push(
-        <button key={number} id={number}  onClick={handlePaginate}>
-          {number}
-        </button>,
-      );
-    }
-  
-  
+  for (let number = 1; number <= Math.ceil(users.length / 2); number++) {
+    items.push(
+      <button key={number} id={number} onClick={handlePaginate}>
+        {number}
+      </button>,
+    );
+  }
 
   const paginationBasic = (
     <div>
@@ -84,12 +133,10 @@ export default function New() {
     </div>
   );
 
-  
-  if (users.length > 0) {
-    let idPage = 1;
-    const response = await api.get(`/paginate/${idPage}`);
 
-    console.log(response.data.users);
+  if (users.length > 0) {
+
+    // const response = api.get(`/paginate/${idPage}`);
     listUsers = (
       <table className="table table-striped">
         <thead>
@@ -103,7 +150,7 @@ export default function New() {
           </tr>
         </thead>
         {
-          response.data.users.map((user, key) => (
+          users.map((user, key) => (
             <tbody key={user.id}>
               <tr>
                 <th scope="row">{user.id}</th>
@@ -112,6 +159,7 @@ export default function New() {
                 <td>{user.estado}</td>
                 <td>{user.cep}</td>
                 <td><button key={key} id={user.id} type="button" onClick={deleteUser} className="btn btn-primary">Delete</button></td>
+                <td><button key={key} id={user.id} type="button" onClick={editUser} className="btn btn-primary">Editar</button></td>
               </tr>
             </tbody>
           ))}
@@ -137,6 +185,7 @@ export default function New() {
                   id="txtEmail"
                   value={email}
                   onChange={(event) => setEmail(event.target.value)}
+                  disabled={!btnuser}
                   required
                 />
               </div>
@@ -201,8 +250,8 @@ export default function New() {
               </div>
             </div>
             <button type="submit" className="btn btn-primary">
-              cadastrar
-            </button>
+              {btnuser ? 'Cadastrar' : 'Editar'}
+            </button>            
           </form>
         </div>
       </div>

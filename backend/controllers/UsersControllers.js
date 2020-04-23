@@ -49,7 +49,7 @@ module.exports = {
 
   //Metodo para listar todos os usuários
   async index(req, res) {
-    const users = await User.findAll({      
+    const users = await User.findAll({
       order: [["ID", "ASC"]],
     });
 
@@ -61,15 +61,15 @@ module.exports = {
     let limit = 2;
     let offset = 0;
 
-    const countAllUsers = await User.findAndCountAll(); 
-    let page = req.params.page;   
+    const countAllUsers = await User.findAndCountAll();
+    let page = req.params.page;
     let pages = Math.ceil(countAllUsers.count / limit);
     offset = limit * (page - 1);
 
 
     const users = await User.findAll({
-      limit: limit,   
-      offset: offset,   
+      limit: limit,
+      offset: offset,
       order: [["ID", "ASC"]]
     });
 
@@ -78,12 +78,29 @@ module.exports = {
   },
 
   //Metodo para retornar um usuário
-  async indexOne(req, res) {
+  async edit(req, res) {
     const { id } = req.params;
+    const { email, password, cidade, estado, cep } = req.body;
 
-    const user = await User.findOne({ where: { id } });
+    const userExists = await User.findOne({ where: { id } });
 
-    return res.json(user);
+    if (userExists) {
+      user = await User.update(
+        {
+          email,
+          password,
+          cidade,
+          estado,
+          cep,
+        }, { where: { id } } );
+
+      return res.json(user);
+
+    } else {
+      return res.send(false);
+    }
+
+
   },
 
   //Metodo para deletar usuário
