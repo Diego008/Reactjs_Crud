@@ -1,6 +1,5 @@
 const User = require("../models/user");
 const crypto = require("crypto");
-const db = require('sequelize-paginate');
 
 module.exports = {
   //Metodo para criar usuário
@@ -50,8 +49,7 @@ module.exports = {
 
   //Metodo para listar todos os usuários
   async index(req, res) {
-    const users = await User.findAll({
-      limit: 5,
+    const users = await User.findAll({      
       order: [["ID", "ASC"]],
     });
 
@@ -63,16 +61,19 @@ module.exports = {
     let limit = 2;
     let offset = 0;
 
-    const countAllUsers = await User.findAndCountAll();
-
+    const countAllUsers = await User.findAndCountAll(); 
+    let page = req.params.page;   
     let pages = Math.ceil(countAllUsers.count / limit);
+    offset = limit * (page - 1);
+
 
     const users = await User.findAll({
-      limit: limit,      
+      limit: limit,   
+      offset: offset,   
       order: [["ID", "ASC"]]
     });
 
-    return res.json({ users, countAllUsers, pages });
+    return res.json({ users, 'count': countAllUsers.count, pages });
 
   },
 

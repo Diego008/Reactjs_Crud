@@ -55,27 +55,27 @@ export default function New() {
 
   };
 
-  let listUsers;
-  let currentPage = 1;
+  let listUsers;  
   let items = [];
   let usersPerPage = 3;
 
   function handlePaginate(e) {
     const id = e.target.id;
-    
-    currentPage = parseInt(id);
-    console.log(currentPage);
+        
+    console.log(id);
+    api.get(`/paginate/${id}`).then(response => {
+      console.log(response.data.users);
+    })
   };
 
-  if(users.length > 2){
     for (let number = 1; number <= Math.ceil(users.length / usersPerPage); number++) {
       items.push(
-        <Pagination.Item key={number} active={(number === currentPage)} onClick={handlePaginate}>
+        <button key={number} id={number}  onClick={handlePaginate}>
           {number}
-        </Pagination.Item>,
+        </button>,
       );
     }
-  };
+  
   
 
   const paginationBasic = (
@@ -86,10 +86,10 @@ export default function New() {
 
   
   if (users.length > 0) {
-    const pages = currentPage * usersPerPage;
-    const page = pages - usersPerPage;
-    const usersListPage = users.slice(page, pages);
+    let idPage = 1;
+    const response = await api.get(`/paginate/${idPage}`);
 
+    console.log(response.data.users);
     listUsers = (
       <table className="table table-striped">
         <thead>
@@ -103,7 +103,7 @@ export default function New() {
           </tr>
         </thead>
         {
-          usersListPage.map((user, key) => (
+          response.data.users.map((user, key) => (
             <tbody key={user.id}>
               <tr>
                 <th scope="row">{user.id}</th>
