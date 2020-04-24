@@ -1,5 +1,6 @@
 const User = require("../models/user");
 const crypto = require("crypto");
+const paginate = require('express-paginate');
 
 module.exports = {
   //Metodo para criar usuário
@@ -50,6 +51,7 @@ module.exports = {
   //Metodo para listar todos os usuários
   async index(req, res) {
     const users = await User.findAll({
+      limit: 3,
       order: [["ID", "ASC"]],
     });
 
@@ -57,23 +59,23 @@ module.exports = {
 
   },
 
-  async pagination(req, res) {
-    let limit = 2;
-    let offset = 0;
+  async pagination(req, res, next) {
+    
+    User.findAndCountAll({
+      limit: req.query.limit, 
+      offset: req.query.limit * (req.params.page - 1)
+    })
+      .then(results => {
+        const itemCount = results.count;
+        const pageCount = Math.ceil(results.count / req.query.limit);
 
-    const countAllUsers = await User.findAndCountAll();
-    let page = req.params.page;
-    let pages = Math.ceil(countAllUsers.count / limit);
-    offset = limit * (page - 1);
-
-
-    const users = await User.findAll({
-      limit: limit,
-      offset: offset,
-      order: [["ID", "ASC"]]
-    });
-
-    return res.json({ users, 'count': countAllUsers.count, pages });
+        res.json({
+          users: results.rows,
+          pageCount,
+          itemCount,
+          pages: paginate.getArrayPages(req)(3, pageCount, req.query.page)
+        });
+    }).catch(err => next(err))
 
   },
 

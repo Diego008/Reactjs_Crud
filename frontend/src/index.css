@@ -19,3 +19,7 @@ code {
 .marginTable{
   margin-top: 10%;
 }
+
+table > tbody > tr > td.acoes > button{
+  margin-right: 10px;
+}

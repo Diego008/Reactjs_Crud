@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Modal, Button, Pagination } from "react-bootstrap";
+import { Modal, Button } from "react-bootstrap";
 import api from '../services/api';
 
 export default function New() {
@@ -17,7 +17,7 @@ export default function New() {
   async function handleSubmit(event) {
     event.preventDefault();
 
-    if(btnuser){
+    if (btnuser) {
       const response = await api.post('/', {
         email,
         password,
@@ -25,7 +25,7 @@ export default function New() {
         estado,
         cep,
       });
-  
+
       if (response.data) {
         loadUsers();
         setEmail("");
@@ -37,8 +37,8 @@ export default function New() {
       } else {
         setShow2(true);
       }
-    }else{
-      const response = await api.put(`/edituser/${idUser}`, {      
+    } else {
+      const response = await api.put(`/edituser/${idUser}`, {
         email,
         password,
         cidade,
@@ -65,16 +65,54 @@ export default function New() {
   const handleClose = () => setShow(false);
   const handleClose2 = () => setShow2(false);
 
-    // let idPage = 1;
-    async function loadUsers() {
-      const response = await api.get('/allusers');
-      // const response = await api.get(`/paginate/${idPage}`);
+  // let idPage = 1;
+  async function loadUsers() {
+    const response = await api.get('/allusers');
+    // const response = await api.get(`/paginate/${idPage}`);
 
-      setUsers(response.data);
-      // setUsers(response.data.users);
-    };
+    setUsers(response.data);
+    // setUsers(response.data.users);
+  };
 
   useEffect(() => { loadUsers() }, []);
+
+  let listUsers;
+
+  async function handlePaginate(e) {
+    const id = e.target.id;
+    await api.get(`/paginate/${id}`).then(response => {
+      setUsers(response.data.users);
+    })
+  };
+  
+  let items = [];
+  for (let number = 1; number <= Math.ceil(users.length / 2); number++) {
+    items.push(
+      // <button key={number} id={number} onClick={handlePaginate}>
+      //   {number}
+      // </button>,
+    <li class="page-item"><button id={number} class="page-link" onClick={handlePaginate}>{number}</button></li>
+
+    );
+  }
+  
+  const paginationBasic = (
+    // <div>
+    //   <Pagination size="sm">{items}</Pagination>
+    // </div>
+      <nav aria-label="...">
+        <ul class="pagination">
+          <li class="page-item disabled">
+            <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Previous</a>
+          </li>
+          {items}
+          <li class="page-item">
+            <a class="page-link" href="#">Next</a>
+          </li>
+        </ul>
+      </nav>
+    
+  );
 
   //  useEffect(() => {
   //   async function loadUsers() {
@@ -94,7 +132,7 @@ export default function New() {
 
   };
 
-  async function editUser(e){
+  async function editUser(e) {
     const id = e.target.getAttribute("id");
 
     const user = users.filter(item => item.id === parseInt(id));
@@ -107,38 +145,10 @@ export default function New() {
     setBtnUser(false);
   };
 
-  let listUsers;
-  let items = [];
-
-  async function handlePaginate(e) {
-    const id = e.target.id;
-
-    console.log(id);
-    await api.get(`/paginate/${id}`).then(response => {
-      console.log(response.data.users);
-    })
-  };
-
-  for (let number = 1; number <= Math.ceil(users.length / 2); number++) {
-    items.push(
-      <button key={number} id={number} onClick={handlePaginate}>
-        {number}
-      </button>,
-    );
-  }
-
-  const paginationBasic = (
-    <div>
-      <Pagination size="sm">{items}</Pagination>
-    </div>
-  );
-
 
   if (users.length > 0) {
-
-    // const response = api.get(`/paginate/${idPage}`);
     listUsers = (
-      <table className="table table-striped">
+      <table className="table table-striped table-sm">
         <thead>
           <tr>
             <th scope="col">#</th>
@@ -146,7 +156,7 @@ export default function New() {
             <th scope="col">Cidade</th>
             <th scope="col">Estado</th>
             <th scope="col">CEP</th>
-            <th>Ações</th>
+            <th scope="col">Ações</th>
           </tr>
         </thead>
         {
@@ -158,8 +168,9 @@ export default function New() {
                 <td>{user.cidade}</td>
                 <td>{user.estado}</td>
                 <td>{user.cep}</td>
-                <td><button key={key} id={user.id} type="button" onClick={deleteUser} className="btn btn-primary">Delete</button></td>
-                <td><button key={key} id={user.id} type="button" onClick={editUser} className="btn btn-primary">Editar</button></td>
+                <td className="acoes"><button key={key} id={user.id} type="button" onClick={deleteUser} className="btn btn-primary">Delete</button>
+                  <button key={key} id={user.id} type="button" onClick={editUser} className="btn btn-primary">Editar</button>
+                </td>
               </tr>
             </tbody>
           ))}
@@ -251,7 +262,7 @@ export default function New() {
             </div>
             <button type="submit" className="btn btn-primary">
               {btnuser ? 'Cadastrar' : 'Editar'}
-            </button>            
+            </button>
           </form>
         </div>
       </div>
