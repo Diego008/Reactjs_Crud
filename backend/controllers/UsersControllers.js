@@ -52,7 +52,7 @@ module.exports = {
   async index(req, res) {
     const users = await User.findAll({
       limit: 3,
-      order: [["ID", "ASC"]],
+      order: [["ID", "DESC"]],
     });
 
     return res.json(users);
@@ -63,7 +63,10 @@ module.exports = {
     
     User.findAndCountAll({
       limit: req.query.limit, 
-      offset: req.query.limit * (req.params.page - 1)
+      offset: req.query.limit * (req.params.page - 1),
+      order: [
+        ['ID', 'DESC']
+      ]
     })
       .then(results => {
         const itemCount = results.count;

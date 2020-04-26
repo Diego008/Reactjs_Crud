@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Modal, Button } from "react-bootstrap";
+import { Modal, Button, Pagination } from "react-bootstrap";
 import api from '../services/api';
 
 export default function New() {
@@ -13,6 +13,7 @@ export default function New() {
   const [users, setUsers] = useState([]);
   const [btnuser, setBtnUser] = useState(true);
   const [idUser, setId] = useState(0);
+  const [pages, setPages] = useState(1);
 
   async function handleSubmit(event) {
     event.preventDefault();
@@ -27,7 +28,8 @@ export default function New() {
       });
 
       if (response.data) {
-        loadUsers();
+        // loadUsers();
+        setUsers(response.data);
         setEmail("");
         setPassword("");
         setCidade("");
@@ -47,7 +49,8 @@ export default function New() {
       });
 
       if (response.data) {
-        loadUsers();
+        // loadUsers();
+        setUsers(response.data);
         setEmail("");
         setPassword("");
         setCidade("");
@@ -65,64 +68,50 @@ export default function New() {
   const handleClose = () => setShow(false);
   const handleClose2 = () => setShow2(false);
 
-  // let idPage = 1;
-  async function loadUsers() {
-    const response = await api.get('/allusers');
-    // const response = await api.get(`/paginate/${idPage}`);
+  // async function loadUsers() {
+  //   const response = await api.get('/allusers');
 
-    setUsers(response.data);
-    // setUsers(response.data.users);
-  };
+  //   setUsers(response.data);
+  // };
 
-  useEffect(() => { loadUsers() }, []);
+  // useEffect(() => { loadUsers() }, []);
+ let idPage = 1;
+  useEffect(() => {
+    async function loadUsers(){
+      // const response = await api.get('/allusers');
+      // setUsers(response.data);
+      const response = await api.get(`/paginate/${idPage}`);
 
-  let listUsers;
+      setUsers(response.data.users);
+      setPages(response.data.pageCount);
+    }
+
+    loadUsers();
+  }, [idPage])  
 
   async function handlePaginate(e) {
-    const id = e.target.id;
-    await api.get(`/paginate/${id}`).then(response => {
+    idPage = e.target.id;
+    await api.get(`/paginate/${idPage}`).then(response => {
       setUsers(response.data.users);
-    })
+    })    
   };
   
   let items = [];
-  for (let number = 1; number <= Math.ceil(users.length / 2); number++) {
+  
+  for (let number = 1; number <= pages; number++) {
     items.push(
-      // <button key={number} id={number} onClick={handlePaginate}>
-      //   {number}
-      // </button>,
-    <li class="page-item"><button id={number} class="page-link" onClick={handlePaginate}>{number}</button></li>
-
+      <Pagination.Item key={number} id={number} active={number === idPage} onClick={handlePaginate}>
+        {number}
+      </Pagination.Item>,
     );
   }
   
   const paginationBasic = (
-    // <div>
-    //   <Pagination size="sm">{items}</Pagination>
-    // </div>
-      <nav aria-label="...">
-        <ul class="pagination">
-          <li class="page-item disabled">
-            <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Previous</a>
-          </li>
-          {items}
-          <li class="page-item">
-            <a class="page-link" href="#">Next</a>
-          </li>
-        </ul>
-      </nav>
+    <div>
+      <Pagination size="sm">{items}</Pagination>
+    </div>
     
   );
-
-  //  useEffect(() => {
-  //   async function loadUsers() {
-  //     // const response = await api.get('/allusers');
-  //     const response = await api.get(`/paginate/${idPage}`);
-
-  //     setUsers(response.data.users);
-  //   }
-  //    loadUsers();
-  //   }, [idPage]);
 
   async function deleteUser(e) {
     const id = e.target.getAttribute("id");
@@ -145,7 +134,7 @@ export default function New() {
     setBtnUser(false);
   };
 
-
+  let listUsers;
   if (users.length > 0) {
     listUsers = (
       <table className="table table-striped table-sm">
@@ -169,7 +158,7 @@ export default function New() {
                 <td>{user.estado}</td>
                 <td>{user.cep}</td>
                 <td className="acoes"><button key={key} id={user.id} type="button" onClick={deleteUser} className="btn btn-primary">Delete</button>
-                  <button key={key} id={user.id} type="button" onClick={editUser} className="btn btn-primary">Editar</button>
+                  <button id={user.id} type="button" onClick={editUser} className="btn btn-primary">Editar</button>
                 </td>
               </tr>
             </tbody>
