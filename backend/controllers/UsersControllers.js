@@ -90,10 +90,13 @@ module.exports = {
     const userExists = await User.findOne({ where: { id } });
 
     if (userExists) {
+
+      const crypted = crypto.createHash("sha512").update(password).digest("base64");
+
       user = await User.update(
         {
           email,
-          password,
+          password: crypted,
           cidade,
           estado,
           cep,

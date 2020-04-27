@@ -14,6 +14,8 @@ export default function New() {
   const [btnuser, setBtnUser] = useState(true);
   const [idUser, setId] = useState(0);
   const [pages, setPages] = useState(1);
+  const [idPage, setIdPage] = useState(1);
+  // let idPage = 1;
 
   async function handleSubmit(event) {
     event.preventDefault();
@@ -28,8 +30,7 @@ export default function New() {
       });
 
       if (response.data) {
-        // loadUsers();
-        setUsers(response.data);
+        loadUsers();
         setEmail("");
         setPassword("");
         setCidade("");
@@ -48,9 +49,8 @@ export default function New() {
         cep
       });
 
-      if (response.data) {
-        // loadUsers();
-        setUsers(response.data);
+      if (response.data) {        
+        loadUsers();        
         setEmail("");
         setPassword("");
         setCidade("");
@@ -66,52 +66,54 @@ export default function New() {
   }
 
   const handleClose = () => setShow(false);
-  const handleClose2 = () => setShow2(false);
-
-  // async function loadUsers() {
-  //   const response = await api.get('/allusers');
-
-  //   setUsers(response.data);
-  // };
-
-  // useEffect(() => { loadUsers() }, []);
- let idPage = 1;
-  useEffect(() => {
-    async function loadUsers(){
-      // const response = await api.get('/allusers');
-      // setUsers(response.data);
-      const response = await api.get(`/paginate/${idPage}`);
+  const handleClose2 = () => setShow2(false); 
+  
+  const loadUsers = async () => {
+    const response = await api.get(`/paginate/${idPage}`);
 
       setUsers(response.data.users);
       setPages(response.data.pageCount);
-    }
+      setIdPage(response.data.pages[idPage-1].number);
+  };
 
-    loadUsers();
-  }, [idPage])  
+  useEffect(() => {loadUsers()}, [pages, idPage]);
+  
+  // useEffect(() => {
+  //   async function loadUsers(){
+  //     const response = await api.get(`/paginate/${idPage}`);
+
+  //     setUsers(response.data.users);
+  //     setPages(response.data.pageCount);
+  //   }
+
+  //   loadUsers();
+  // }, [pages, idPage])  
 
   async function handlePaginate(e) {
-    idPage = e.target.id;
+    setIdPage(e.target.id);
     await api.get(`/paginate/${idPage}`).then(response => {
-      setUsers(response.data.users);
-    })    
+      setUsers(response.data.users);      
+    })   
   };
   
-  let items = [];
-  
-  for (let number = 1; number <= pages; number++) {
-    items.push(
-      <Pagination.Item key={number} id={number} active={number === idPage} onClick={handlePaginate}>
-        {number}
-      </Pagination.Item>,
+  let paginationBasic;
+  if(pages > 1){
+    let items = [];
+    for (let number = 1; number <= pages; number++) {
+      items.push(
+        <Pagination.Item key={number} id={number} active={number === idPage} onClick={handlePaginate}>
+          {number}
+        </Pagination.Item>,
+      );
+    } 
+
+    paginationBasic = (
+      <div>
+        <Pagination size="sm">{items}</Pagination>
+      </div>
+      
     );
   }
-  
-  const paginationBasic = (
-    <div>
-      <Pagination size="sm">{items}</Pagination>
-    </div>
-    
-  );
 
   async function deleteUser(e) {
     const id = e.target.getAttribute("id");
@@ -119,6 +121,7 @@ export default function New() {
 
     setUsers(users.filter(item => item.id !== parseInt(id)));
 
+    loadUsers();
   };
 
   async function editUser(e) {
