@@ -20,6 +20,19 @@ code {
   margin-top: 10%;
 }
 
+.divTable{
+  height: 190px;
+}
+
 table > tbody > tr > td.acoes > button{
   margin-right: 10px;
+}
+
+.btnPagination:disabled{
+  color: #333;
+  cursor: not-allowed
+}
+
+.btnPagination:disabled:hover{
+  background-color: transparent;
 }

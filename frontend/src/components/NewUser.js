@@ -49,8 +49,8 @@ export default function New() {
         cep
       });
 
-      if (response.data) {        
-        loadUsers();        
+      if (response.data) {
+        loadUsers();
         setEmail("");
         setPassword("");
         setCidade("");
@@ -66,18 +66,18 @@ export default function New() {
   }
 
   const handleClose = () => setShow(false);
-  const handleClose2 = () => setShow2(false); 
-  
+  const handleClose2 = () => setShow2(false);
+
   const loadUsers = async () => {
     const response = await api.get(`/paginate/${idPage}`);
 
-      setUsers(response.data.users);
-      setPages(response.data.pageCount);
-      setIdPage(response.data.pages[idPage-1].number);
+    setUsers(response.data.users);
+    setPages(response.data.pageCount);
+    setIdPage(response.data.pages[idPage - 1].number);
   };
 
-  useEffect(() => {loadUsers()}, [pages, idPage]);
-  
+  useEffect(() => { loadUsers() }, [pages, idPage]);
+
   // useEffect(() => {
   //   async function loadUsers(){
   //     const response = await api.get(`/paginate/${idPage}`);
@@ -92,12 +92,12 @@ export default function New() {
   async function handlePaginate(e) {
     setIdPage(e.target.id);
     await api.get(`/paginate/${idPage}`).then(response => {
-      setUsers(response.data.users);      
-    })   
+      setUsers(response.data.users);
+    })
   };
-  
+
   let paginationBasic;
-  if(pages > 1){
+  if (pages > 1) {
     let items = [];
     for (let number = 1; number <= pages; number++) {
       items.push(
@@ -105,13 +105,13 @@ export default function New() {
           {number}
         </Pagination.Item>,
       );
-    } 
+    }
 
     paginationBasic = (
       <div>
-        <Pagination size="sm">{items}</Pagination>
+        <Pagination size="md">{items}</Pagination>
       </div>
-      
+
     );
   }
 
@@ -260,14 +260,27 @@ export default function New() {
       </div>
 
       <div className="row marginTable">
-        <div className="col-sm-12 d-flex justify-content-center">
+        <div className="col-sm-12 d-flex justify-content-center divTable">
           {listUsers}
         </div>
       </div>
 
-      <div className="row justify-content-center">
-        {paginationBasic}
+
+      <div className="row">
+        <div className="col-sm-12 d-flex justify-content-center">
+          <ul className="pagination">
+            <li className="page-item">
+              <button type="button" className="page-link btnPagination" disabled={idPage === 1}>Previous</button>
+            </li>
+            {paginationBasic}
+
+            <li className="page-item">
+              <button className="page-link btnPagination" disabled={idPage === pages} >Next</button>
+            </li>
+          </ul>
+        </div>
       </div>
+
 
       <Modal show={success} onHide={handleClose}>
         <Modal.Header closeButton>
