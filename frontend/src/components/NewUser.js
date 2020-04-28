@@ -270,12 +270,11 @@ export default function New() {
         <div className="col-sm-12 d-flex justify-content-center">
           <ul className="pagination">
             <li className="page-item">
-              <button type="button" className="page-link btnPagination" disabled={idPage === 1}>Previous</button>
+              <button id={idPage - 1} type="button" className="page-link btnPagination" disabled={idPage === 1} onClick={handlePaginate}>Previous</button>
             </li>
             {paginationBasic}
-
             <li className="page-item">
-              <button className="page-link btnPagination" disabled={idPage === pages} >Next</button>
+              <button id={idPage + 1} className="page-link btnPagination" disabled={idPage === pages} onClick={handlePaginate} >Next</button>
             </li>
           </ul>
         </div>
