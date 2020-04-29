@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Modal, Button, Pagination } from "react-bootstrap";
-import api from '../services/api';
+import api from "../services/api";
 
 export default function New() {
   const [email, setEmail] = useState("");
@@ -21,7 +21,7 @@ export default function New() {
     event.preventDefault();
 
     if (btnuser) {
-      const response = await api.post('/', {
+      const response = await api.post("/", {
         email,
         password,
         cidade,
@@ -46,7 +46,7 @@ export default function New() {
         password,
         cidade,
         estado,
-        cep
+        cep,
       });
 
       if (response.data) {
@@ -62,7 +62,6 @@ export default function New() {
         setShow2(true);
       }
     }
-
   }
 
   const handleClose = () => setShow(false);
@@ -76,7 +75,9 @@ export default function New() {
     setIdPage(response.data.pages[idPage - 1].number);
   };
 
-  useEffect(() => { loadUsers() }, [pages, idPage]);
+  useEffect(() => {
+    loadUsers();
+  }, [pages, idPage]);
 
   // useEffect(() => {
   //   async function loadUsers(){
@@ -87,23 +88,28 @@ export default function New() {
   //   }
 
   //   loadUsers();
-  // }, [pages, idPage])  
+  // }, [pages, idPage])
 
   async function handlePaginate(e) {
     setIdPage(e.target.id);
-    await api.get(`/paginate/${idPage}`).then(response => {
+    await api.get(`/paginate/${idPage}`).then((response) => {
       setUsers(response.data.users);
-    })
-  };
+    });
+  }
 
   let paginationBasic;
   if (pages > 1) {
     let items = [];
     for (let number = 1; number <= pages; number++) {
       items.push(
-        <Pagination.Item key={number} id={number} active={number === idPage} onClick={handlePaginate}>
+        <Pagination.Item
+          key={number}
+          id={number}
+          active={number === idPage}
+          onClick={handlePaginate}
+        >
           {number}
-        </Pagination.Item>,
+        </Pagination.Item>
       );
     }
 
@@ -111,7 +117,6 @@ export default function New() {
       <div>
         <Pagination size="md">{items}</Pagination>
       </div>
-
     );
   }
 
@@ -119,15 +124,15 @@ export default function New() {
     const id = e.target.getAttribute("id");
     await api.delete(`/deleteusers/${id}`);
 
-    setUsers(users.filter(item => item.id !== parseInt(id)));
+    setUsers(users.filter((item) => item.id !== parseInt(id)));
 
     loadUsers();
-  };
+  }
 
   async function editUser(e) {
     const id = e.target.getAttribute("id");
 
-    const user = users.filter(item => item.id === parseInt(id));
+    const user = users.filter((item) => item.id === parseInt(id));
 
     setEmail(user[0].email);
     setCidade(user[0].cidade);
@@ -135,7 +140,12 @@ export default function New() {
     setCep(user[0].cep);
     setId(id);
     setBtnUser(false);
-  };
+  }
+
+  function handleSearch(e){
+    console.log(e.target.value);
+    console.log(e.key);
+  }
 
   let listUsers;
   if (users.length > 0) {
@@ -151,28 +161,45 @@ export default function New() {
             <th scope="col">Ações</th>
           </tr>
         </thead>
-        {
-          users.map((user, key) => (
-            <tbody key={user.id}>
-              <tr>
-                <th scope="row">{user.id}</th>
-                <td>{user.email}</td>
-                <td>{user.cidade}</td>
-                <td>{user.estado}</td>
-                <td>{user.cep}</td>
-                <td className="acoes"><button key={key} id={user.id} type="button" onClick={deleteUser} className="btn btn-primary">Delete</button>
-                  <button id={user.id} type="button" onClick={editUser} className="btn btn-primary">Editar</button>
-                </td>
-              </tr>
-            </tbody>
-          ))}
+        {users.map((user, key) => (
+          <tbody key={user.id}>
+            <tr>
+              <th scope="row">{user.id}</th>
+              <td>{user.email}</td>
+              <td>{user.cidade}</td>
+              <td>{user.estado}</td>
+              <td>{user.cep}</td>
+              <td className="acoes">
+                <button
+                  key={key}
+                  id={user.id}
+                  type="button"
+                  onClick={deleteUser}
+                  className="btn btn-primary"
+                >
+                  Delete
+                </button>
+                <button
+                  id={user.id}
+                  type="button"
+                  onClick={editUser}
+                  className="btn btn-primary"
+                >
+                  Editar
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        ))}
       </table>
     );
   } else {
     listUsers = (
-      <p><strong>Nenhum usuário Cadastrado.</strong></p>
+      <p>
+        <strong>Nenhum usuário Cadastrado.</strong>
+      </p>
     );
-  };
+  }
 
   return (
     <div>
@@ -253,33 +280,67 @@ export default function New() {
               </div>
             </div>
             <button type="submit" className="btn btn-primary">
-              {btnuser ? 'Cadastrar' : 'Editar'}
+              {btnuser ? "Cadastrar" : "Editar"}
             </button>
           </form>
         </div>
       </div>
 
-      <div className="row marginTable">
+      <div className="d-flex flex-row-reverse bd-highlight">
+        <div className="p-2 bd-highlight">
+          <div className="form-inline my-2 my-lg-0">
+            <input
+              className="form-control mr-sm-2"
+              type="text"
+              placeholder="Search"
+              aria-label="Search"
+              onKeyUp={handleSearch}
+              tabIndex="0"
+            />
+            <button
+              className="btn btn-outline-success my-2 my-sm-0"
+              type="submit"
+            >
+              Search
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div className="row">
         <div className="col-sm-12 d-flex justify-content-center divTable">
           {listUsers}
         </div>
       </div>
 
-
       <div className="row">
         <div className="col-sm-12 d-flex justify-content-center">
           <ul className="pagination">
             <li className="page-item">
-              <button id={idPage - 1} type="button" className="page-link btnPagination" disabled={idPage === 1} onClick={handlePaginate}>Previous</button>
+              <button
+                id={idPage - 1}
+                type="button"
+                className="page-link btnPagination"
+                disabled={idPage === 1}
+                onClick={handlePaginate}
+              >
+                Previous
+              </button>
             </li>
             {paginationBasic}
             <li className="page-item">
-              <button id={idPage + 1} className="page-link btnPagination" disabled={idPage === pages} onClick={handlePaginate} >Next</button>
+              <button
+                id={idPage + 1}
+                className="page-link btnPagination"
+                disabled={idPage === pages}
+                onClick={handlePaginate}
+              >
+                Next
+              </button>
             </li>
           </ul>
         </div>
       </div>
-
 
       <Modal show={success} onHide={handleClose}>
         <Modal.Header closeButton>
@@ -310,8 +371,6 @@ export default function New() {
           </Button> */}
         </Modal.Footer>
       </Modal>
-
     </div>
   );
-
 }
