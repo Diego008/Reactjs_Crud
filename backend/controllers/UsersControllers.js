@@ -1,6 +1,8 @@
 const User = require("../models/user");
 const crypto = require("crypto");
 const paginate = require('express-paginate');
+const {Sequelize} = require('sequelize');
+const Op = Sequelize.Op;
 
 module.exports = {
   //Metodo para criar usuário
@@ -50,12 +52,21 @@ module.exports = {
 
   //Metodo para listar todos os usuários
   async index(req, res) {
+    const text = req.params.find;    
+    
     const users = await User.findAll({
-      limit: 3,
-      order: [["ID", "DESC"]],
+      where: {
+        email: {
+          [Op.like]: `%${text}%`         
+        }
+      }
     });
 
-    return res.json(users);
+    if(users){
+      return res.json(users);
+    }else{
+      return res.send(false);
+    }     
 
   },
 

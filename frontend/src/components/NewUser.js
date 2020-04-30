@@ -142,9 +142,14 @@ export default function New() {
     setBtnUser(false);
   }
 
-  function handleSearch(e){
-    console.log(e.target.value);
-    console.log(e.key);
+  function handleSearch(event) {
+    event.preventDefault();
+    api.get(`/allusers/${email}`).then(response => {
+      if (response) {
+        setUsers(response.data);
+      }
+    });
+
   }
 
   let listUsers;
@@ -294,12 +299,12 @@ export default function New() {
               type="text"
               placeholder="Search"
               aria-label="Search"
-              onKeyUp={handleSearch}
+              onChange={(event) => setEmail(event.target.value)}
               tabIndex="0"
             />
             <button
               className="btn btn-outline-success my-2 my-sm-0"
-              type="submit"
+              type="button" onClick={handleSearch}
             >
               Search
             </button>
