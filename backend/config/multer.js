@@ -6,7 +6,7 @@ const storageTypes = {
     local: multer.diskStorage({
         //destino da imagem
         destination: (req, file, cb) => {
-            cb(null, path.resolve(__dirname, '..', '..', 'tmp', 'uploads'))
+            cb(null, path.resolve(__dirname, '..', 'tmp', 'uploads'))
         },
 
         //criando hash no prefixo do nome do arquivo para evitar arquivos duplicados que podem ser subidos
@@ -15,7 +15,7 @@ const storageTypes = {
             crypto.randomBytes(16, (err, hash) => {
                 if(err) cb(err);
 
-                file.key = `${hash.toString('hex')}-${file.originalname}`
+                file.key = `${hash.toString('hex')}-${file.originalname}`.split(" ").join("");
 
                 cb(null, file.key)
             })
@@ -24,7 +24,7 @@ const storageTypes = {
 }
 
 module.exports = {
-    dest: path.resolve(__dirname, '..', '..', 'tmp', 'uploads'),
+    dest: path.resolve(__dirname, '..', 'tmp', 'uploads'),
     storage: storageTypes['local'],
 
     //definindo tamanho da imagem

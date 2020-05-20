@@ -9,6 +9,7 @@ module.exports = {
   async store(req, res) {
     try {
       const { email, password, cidade, estado, cep } = req.body;
+      const {originalname, key} = req.file;      
 
       let user = await User.findOne({ where: { email } });
 
@@ -41,6 +42,9 @@ module.exports = {
           cidade,
           estado,
           cep,
+          img_original_name: originalname,
+          // image_url: `${process.env.APP_URL}/files/${key}` 
+          image_url: key         
         });
 
         return res.json(user);

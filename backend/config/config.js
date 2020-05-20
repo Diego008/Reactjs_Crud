@@ -1,6 +1,6 @@
 module.exports = {
   username: 'root',
-  password: process.env.PASSWORD_DB,
+  password: process.env.PASSWORD_DB,  
   database: 'crudreactjs',
   host: 'localhost',
   dialect: 'mysql',
