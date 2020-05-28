@@ -5,7 +5,7 @@ const multerConfig = require('../config/multer');
 
 const users = require('../controllers/UsersControllers');
 
-routes.post('/', multer(multerConfig).single('img_original_name'), users.store);
+routes.post('/', multer(multerConfig).single('image_url'), users.store);
 routes.get('/allusers/:find', users.index);
 routes.get('/paginate/:page', users.pagination);
 routes.put('/edituser/:id', users.edit);

@@ -8,7 +8,7 @@ export default function New() {
   const [cidade, setCidade] = useState("");
   const [estado, setEstado] = useState("");
   const [cep, setCep] = useState("");
-  const [img_original_name, setImage] = useState(null);
+  const [image_url, setImage] = useState(null);
   const [success, setShow] = useState(false);
   const [warning, setShow2] = useState(false);
   const [users, setUsers] = useState([]);
@@ -24,17 +24,15 @@ export default function New() {
   async function handleSubmit(event) {
     event.preventDefault();    
     if (btnuser) {            
-      console.log(img_original_name);
+      
       const response = await api.post("/", {
         email,
         password,
         cidade,
         estado,
         cep,
-        img_original_name       
-      });
-
-      console.log(response.data);
+        image_url       
+      });      
 
       if (response.data) {
         loadUsers();
@@ -43,6 +41,7 @@ export default function New() {
         setCidade("");
         setEstado("");
         setCep("");
+        setImage(null);
         setShow(true);
       } else {
         setShow2(true);
@@ -54,6 +53,7 @@ export default function New() {
         cidade,
         estado,
         cep,
+        image_url
       });
 
       if (response.data) {
@@ -63,6 +63,7 @@ export default function New() {
         setCidade("");
         setEstado("");
         setCep("");
+        setImage(null);
         setShow(true);
         setBtnUser(true);
       } else {
