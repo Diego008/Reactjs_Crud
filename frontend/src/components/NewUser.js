@@ -8,6 +8,7 @@ export default function New() {
   const [cidade, setCidade] = useState("");
   const [estado, setEstado] = useState("");
   const [cep, setCep] = useState("");
+  const [img_original_name, setImage] = useState(null);
   const [success, setShow] = useState(false);
   const [warning, setShow2] = useState(false);
   const [users, setUsers] = useState([]);
@@ -15,19 +16,25 @@ export default function New() {
   const [idUser, setId] = useState(0);
   const [pages, setPages] = useState(1);
   const [idPage, setIdPage] = useState(1);
-  // let idPage = 1;
+
+  // const preview = useMemo(() => {
+  //   return image ? URL.createObjectURL(image) : null;
+  // }, [image]);
 
   async function handleSubmit(event) {
-    event.preventDefault();
-
-    if (btnuser) {
+    event.preventDefault();    
+    if (btnuser) {            
+      console.log(img_original_name);
       const response = await api.post("/", {
         email,
         password,
         cidade,
         estado,
         cep,
+        img_original_name       
       });
+
+      console.log(response.data);
 
       if (response.data) {
         loadUsers();
@@ -144,12 +151,11 @@ export default function New() {
 
   function handleSearch(event) {
     event.preventDefault();
-    api.get(`/allusers/${email}`).then(response => {
+    api.get(`/allusers/${email}`).then((response) => {
       if (response) {
         setUsers(response.data);
       }
     });
-
   }
 
   let listUsers;
@@ -274,6 +280,14 @@ export default function New() {
               </div>
             </div>
             <div className="form-group">
+              <label>Escolha uma imagem para perfil</label>
+              <input
+                type="file"
+                className="form-control-file"
+                onChange={(event) => setImage(event.target.value)}
+              />
+            </div>
+            <div className="form-group">
               <div className="form-check">
                 <input
                   className="form-check-input"
@@ -304,7 +318,8 @@ export default function New() {
             />
             <button
               className="btn btn-outline-success my-2 my-sm-0"
-              type="button" onClick={handleSearch}
+              type="button"
+              onClick={handleSearch}
             >
               Search
             </button>
