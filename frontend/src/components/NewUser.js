@@ -22,16 +22,22 @@ export default function New() {
   // }, [image]);
 
   async function handleSubmit(event) {
-    event.preventDefault();    
-    if (btnuser) {            
-      
-      const response = await api.post("/", {
-        email,
-        password,
-        cidade,
-        estado,
-        cep,
-        image_url       
+    event.preventDefault(); 
+    
+    const dataForm = new FormData();
+    dataForm.append('email', email);
+    dataForm.append('password', password);
+    dataForm.append('cidade', cidade);
+    dataForm.append('estado', estado);
+    dataForm.append('cep', cep);
+    dataForm.append('image_url', image_url);
+    console.log(dataForm);
+
+    if (btnuser) {                  
+      const response = await api.post("/", dataForm, {          
+        headers: {
+          'content-type': 'multipart/form-data'
+        } 
       });      
 
       if (response.data) {
@@ -141,11 +147,12 @@ export default function New() {
     const id = e.target.getAttribute("id");
 
     const user = users.filter((item) => item.id === parseInt(id));
-
+    console.log(user[0].image_url);
     setEmail(user[0].email);
     setCidade(user[0].cidade);
     setEstado(user[0].estado);
     setCep(user[0].cep);
+    setImage(user[0].image_url);
     setId(id);
     setBtnUser(false);
   }
@@ -217,7 +224,7 @@ export default function New() {
     <div>
       <div className="col-sm-12 d-flex justify-content-center">
         <div className="col-sm-6">
-          <form onSubmit={handleSubmit} method="post" action="#">
+          <form onSubmit={handleSubmit} method="post" encType="multipart/form-data">
             <div className="form-row">
               <div className="form-group col-md-6">
                 <label>Email</label>
@@ -285,7 +292,8 @@ export default function New() {
               <input
                 type="file"
                 className="form-control-file"
-                onChange={(event) => setImage(event.target.value)}
+                name="image_url"
+                onChange={(event) => setImage(event.target.files[0])}
               />
             </div>
             <div className="form-group">

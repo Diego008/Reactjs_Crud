@@ -7,9 +7,10 @@ const Op = Sequelize.Op;
 module.exports = {
   //Metodo para criar usuário
   async store(req, res) {
-    try {
+    // try {
+      console.log(req.file);
       const { email, password, cidade, estado, cep } = req.body;
-      const {originalname, key} = req.file;      
+      const {key} = req.file;      
 
       let user = await User.findOne({ where: { email } });
 
@@ -42,16 +43,17 @@ module.exports = {
           cidade,
           estado,
           cep,
-          img_original_name: originalname,
-          // image_url: `${process.env.APP_URL}/files/${key}` 
-          image_url: key         
+          img_original_name: key,
+          // image_url: `${process.env.APP_URL}/files/${key}`                  
         });
 
         return res.json(user);
+      }else{
+        return res.status(400).send(false);
       }
-    } catch (err) {
-      return res.status(400).send(false);
-    }
+    // } catch (err) {
+    //   return res.status(400).send(false);
+    // }
   },
 
   //Metodo para listar todos os usuários

@@ -1,3 +1,7 @@
+const fs = require('fs');
+const path = require('path');
+const { promisify } = require('util');
+
 const { Model, DataTypes } = require("sequelize");
 
 class User extends Model {
@@ -30,10 +34,25 @@ class User extends Model {
       }
     );    
     
-    User.beforeCreate(async(user, options) => {
-      const key = user.image_url;      
-      user.image_url = `${process.env.APP_URL}/files/${key}`;
-    })            
+    User.beforeCreate(async(user, options) => {          
+      user.image_url = `${process.env.APP_URL}/files/${user.img_original_name}`;
+    });    
+    
+    User.afterDestroy(async(user, options) => {
+      if(user.image_url !== null){
+        promisify(fs.unlink)(
+          path.resolve(__dirname, "..", "tmp", "uploads", user.img_original_name)
+        );
+      }      
+    });
+
+    // User.addHook('afterDestroy', async(user, options) => {
+    //   if(user.image_url !== null){        
+    //    await promisify(fs.unlink)(
+    //       path.resolve(__dirname, "..", "tmp", "uploads", user.img_original_name)
+    //     );
+    //   } 
+    // })
     
   }
 }
