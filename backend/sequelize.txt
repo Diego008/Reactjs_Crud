@@ -51,27 +51,29 @@ desfazer todas migrations -> npx sequelize-cli db:migrate:undo:all
 Adicionando chave estrangeira em migration
 
 module.exports = {
-    up: (queryInterface, Sequelize) => {
-        return queryInterface.sequelize.transaction((t) => {
-            return Promise.all([
-                queryInterface.addColumn('User', 'name_foreign_key', {
-                    type: Sequelize.STRING
-                }, { transaction: t }),
-                queryInterface.addColumn('Person', 'favoriteColor', {
-                    type: Sequelize.STRING,
-                }, { transaction: t })
-            ])
-        })
-    },
+  up: (queryInterface, Sequelize) => {
+    return queryInterface.sequelize.transaction((t) => {
+        return Promise.all([
+            queryInterface.addColumn('produtos', 'idempresa', {
+                type: Sequelize.INTEGER,                
+                references: {
+                  model: {
+                    tableName: 'empresas',                    
+                  },
+                  key: 'id'
+                },
+            }, { transaction: t })            
+        ])
+    })
+},
 
-    down: (queryInterface, Sequelize) => {
-        return queryInterface.sequelize.transaction((t) => {
-            return Promise.all([
-                queryInterface.removeColumn('Person', 'petName', { transaction: t }),
-                queryInterface.removeColumn('Person', 'favoriteColor', { transaction: t })
-            ])
-        })
-    }
+down: (queryInterface, Sequelize) => {
+    return queryInterface.sequelize.transaction((t) => {
+        return Promise.all([
+            queryInterface.removeColumn('produtos', 'idempresa', { transaction: t })          
+        ])
+    })
+}
 };
 
 Adicionando nova coluna
